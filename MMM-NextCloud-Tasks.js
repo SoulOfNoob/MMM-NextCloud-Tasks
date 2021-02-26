@@ -9,7 +9,8 @@
 
 Module.register("MMM-NextCloud-Tasks", {
 	defaults: {
-		updateInterval: 60000
+		updateInterval: 60000,
+		hideCompletedTasks: false
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -24,7 +25,6 @@ Module.register("MMM-NextCloud-Tasks", {
 		self.loaded = false;
 
 		if(self.verifyConfig(self.config)) {
-			Log.info("config valid");
 			// Schedule update timer.
 			self.getData();
 			setInterval(function() {
@@ -62,7 +62,6 @@ Module.register("MMM-NextCloud-Tasks", {
 		wrapper.className = "MMM-NextCloud-Tasks-wrapper";
 
 		if (self.toDoList) {
-			console.log(self.toDoList);
 			wrapper.appendChild(self.renderList(self.toDoList));
 			self.error = null;
 		} else {
@@ -83,15 +82,17 @@ Module.register("MMM-NextCloud-Tasks", {
 
 		let ul = document.createElement("ul");
 		for (const element of children) {
-			icon = (element.status === "COMPLETED" ? checked : unchecked );
-			let li = document.createElement("li");
-			li.innerHTML = icon + " " + element.summary;
-			if (typeof element.children !== "undefined") {
-				let childList = self.renderList(element.children);
-				console.log("childList: ", childList);
-				li.appendChild(childList);
+			self.config
+			if (element.status !== "COMPLETED" || self.config.hideCompletedTasks === false) {
+				icon = (element.status === "COMPLETED" ? checked : unchecked );
+				let li = document.createElement("li");
+				li.innerHTML = icon + " " + element.summary;
+				if (typeof element.children !== "undefined") {
+					let childList = self.renderList(element.children);
+					li.appendChild(childList);
+				}
+				ul.appendChild(li);
 			}
-			ul.appendChild(li);
 		}
 		return ul;
 	},

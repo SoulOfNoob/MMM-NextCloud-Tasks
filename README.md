@@ -35,6 +35,7 @@ var config = {
                 // See 'Configuration options' for more information.
                 updateInterval: 60000,
                 listUrl: "<NEXTCLOUD_TASKS_PRIVATE_LINK>",
+                hideCompletedTasks: true,
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",
@@ -47,11 +48,12 @@ var config = {
 
 ## Configuration options
 
-| Option           | Description
-|----------------- |-----------
-| `updateInterval` | *Optional* DESCRIPTION HERE
-| `listUrl`        | *Required* "Private Link" url from your desired NextCloud task-list
-| `webDavAuth`     | *Required* WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
+| Option               | Description
+|----------------------|-----------
+| `listUrl`            | *Required* "Private Link" url from your desired NextCloud task-list
+| `webDavAuth`         | *Required* WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
+| `updateInterval`     | *Optional* How often should the data be refreshed (in milliseconds)
+| `hideCompletedTasks` | *Optional* should completed tasks show up or not
 
 ## Screenshots
 
