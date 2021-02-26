@@ -32,7 +32,6 @@ var config = {
             config: {
                 // See 'Configuration options' for more information.
                 updateInterval: 60000,
-                retryDelay: 5000,
                 listUrl: "<NEXTCLOUD_TASKS_PRIVATE_LINK>",
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
