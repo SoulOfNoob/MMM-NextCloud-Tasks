@@ -17,5 +17,9 @@
 
 .MMM-NextCloud-Tasks-wrapper ul {
     list-style: none;
+    padding-left: 10px;
+}
+
+.MMM-NextCloud-Tasks-wrapper > ul {
     padding: 0;
 }

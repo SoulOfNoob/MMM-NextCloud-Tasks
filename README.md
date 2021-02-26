@@ -50,3 +50,7 @@ var config = {
 | `updateInterval` | *Optional* DESCRIPTION HERE
 | `listUrl`        | *Required* "Private Link" url from your desired NextCloud task-list
 | `webDavAuth`     | *Required* WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
+
+## Screenshots
+
+![Module Screenshot](/assets/demo_screenshot.png?raw=true)

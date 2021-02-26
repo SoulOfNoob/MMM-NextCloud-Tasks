@@ -62,6 +62,7 @@ Module.register("MMM-NextCloud-Tasks", {
 		wrapper.className = "MMM-NextCloud-Tasks-wrapper";
 
 		if (self.toDoList) {
+			console.log(self.toDoList);
 			wrapper.appendChild(self.renderList(self.toDoList));
 			self.error = null;
 		} else {
@@ -74,19 +75,24 @@ Module.register("MMM-NextCloud-Tasks", {
 		return wrapper;
 	},
 
-	renderList: function (list) {
+	renderList: function (children) {
+		let self = this;
+
 		let checked = "<span class=\"fa fa-fw fa-check-square\"></span>"
 		let unchecked = "<span class=\"fa fa-fw fa-square\"></span>"
 
 		let ul = document.createElement("ul");
-
-		for (const element of list) {
+		for (const element of children) {
 			icon = (element.status === "COMPLETED" ? checked : unchecked );
-			li = document.createElement("li");
+			let li = document.createElement("li");
 			li.innerHTML = icon + " " + element.summary;
+			if (typeof element.children !== "undefined") {
+				let childList = self.renderList(element.children);
+				console.log("childList: ", childList);
+				li.appendChild(childList);
+			}
 			ul.appendChild(li);
 		}
-
 		return ul;
 	},
 
