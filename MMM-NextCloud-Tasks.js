@@ -10,7 +10,7 @@
 Module.register("MMM-NextCloud-Tasks", {
 	defaults: {
 		updateInterval: 60000,
-		hideCompletedTasks: false
+		hideCompletedTasks: true
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
