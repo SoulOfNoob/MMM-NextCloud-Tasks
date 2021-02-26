@@ -8,6 +8,7 @@
 var NodeHelper = require("node_helper");
 const { AuthType, createClient } = require("webdav");
 const ical = require("node-ical");
+const transformer = require("./transformer");
 
 module.exports = NodeHelper.create({
 	socketNotificationReceived: function(notification, payload) {
@@ -39,6 +40,7 @@ module.exports = NodeHelper.create({
 					if (element.type === 'VTODO') todos.push(element);
 				});
 			}
+			todos = transformer.transformData(todos);
 			callback(todos);
 		} catch (error) {
 			console.error("WebDav", error);
