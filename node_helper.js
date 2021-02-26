@@ -10,17 +10,13 @@ const { AuthType, createClient } = require("webdav");
 const ical = require("node-ical");
 
 module.exports = NodeHelper.create({
-
 	socketNotificationReceived: function(notification, payload) {
 		let self = this;
-		console.log("SoulOfHelper: received Notification", notification, payload);
-		if (notification === "SoulOfTestModule-UPDATE_TODOS") {
-			const config = payload;
-			const client = self.initWebDav(config);
-			
-			self.getData(client, (payload) => {
-				console.log("SoulOfHelper: sending Notification", payload);
-				self.sendSocketNotification("SoulOfTestModule-UPDATE_TODOS", payload);
+		const moduleId = payload.id;
+		if (notification === "MMM-NextCloud-Tasks-UPDATE") {
+			const client = self.initWebDav(payload.config);
+			self.getData(moduleId, client, (payload) => {
+				self.sendData(moduleId, payload);
 			});
 		}
 	},
@@ -29,17 +25,43 @@ module.exports = NodeHelper.create({
 		return client = createClient(config.listUrl, config.webDavAuth);
 	},
 
-	getData: async function(client, callback) {
+	getData: async function(moduleId, client, callback) {
+		let self = this;
 		let todos = [];
-		const directoryItems = await client.getDirectoryContents("/");
-		for (const element of directoryItems) {
-			const text = await client.getFileContents(element.filename, { format: "text" });
-			const icsObj = ical.sync.parseICS(text);
-			Object.values(icsObj).forEach(element => {
-				if (element.type === 'VTODO') todos.push(element);
-			});
+
+		try {
+			const directoryItems = await client.getDirectoryContents("/");
+
+			for (const element of directoryItems) {
+				const text = await client.getFileContents(element.filename, { format: "text" });
+				const icsObj = ical.sync.parseICS(text);
+				Object.values(icsObj).forEach(element => {
+					if (element.type === 'VTODO') todos.push(element);
+				});
+			}
+			callback(todos);
+		} catch (error) {
+			console.error("WebDav", error);
+			if(error.status === 401) {
+				self.sendError(moduleId, "WebDav: Unauthorized!");
+			} else if(error.status === 404) {
+				self.sendError(moduleId, "WebDav: URL Not Found!");
+			} else {
+				self.sendError(moduleId, "WebDav: Unknown error!");
+				self.sendLog(moduleId, ["WebDav: Unknown error: ", error]);
+			}
 		}
-		console.log(todos);
-		callback(todos);
 	},
+
+	sendData: function(moduleId, payload) {
+		this.sendSocketNotification("MMM-NextCloud-Tasks-Helper-TODOS#" + moduleId, payload);
+	},
+
+	sendLog: function(moduleId, payload) {
+		this.sendSocketNotification("MMM-NextCloud-Tasks-Helper-LOG#" + moduleId, payload);
+	},
+
+	sendError: function(moduleId, payload) {
+		this.sendSocketNotification("MMM-NextCloud-Tasks-Helper-ERROR#" + moduleId, payload);
+	}
 });

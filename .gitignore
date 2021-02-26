@@ -1,2 +1,4 @@
 testWebDav.js
 node_modules
+demos
+*DS_Store

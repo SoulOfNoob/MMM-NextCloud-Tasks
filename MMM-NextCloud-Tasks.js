@@ -9,26 +9,31 @@
 
 Module.register("MMM-NextCloud-Tasks", {
 	defaults: {
-		updateInterval: 60000,
-		retryDelay: 5000
+		updateInterval: 60000
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
 		var self = this;
-		var dataRequest = null;
-		var dataNotification = null;
 		var toDoList = null;
+		var error = null;
 
 		//Flag for check if module is loaded
 		this.loaded = false;
 
-		// Schedule update timer.
-		this.getData();
-		setInterval(function() {
+		if(this.verifyConfig(this.config)) {
+			Log.info("config valid");
+			// Schedule update timer.
+			this.getData();
+			setInterval(function() {
+				self.getData();
+				self.updateDom();
+			}, this.config.updateInterval);
+		} else {
+			Log.info("config invalid");
 			self.updateDom();
-		}, this.config.updateInterval);
+		}
 	},
 
 	/*
@@ -38,40 +43,28 @@ Module.register("MMM-NextCloud-Tasks", {
 	 *
 	 */
 	getData: function() {
-		var self = this;
-
-		Log.log("SoulOfModule: sending Notification", self.config);
-		self.sendSocketNotification("SoulOfTestModule-UPDATE_TODOS", self.config);
-
-	},
-
-	/* scheduleUpdate()
-	 * Schedule next update.
-	 *
-	 * argument delay number - Milliseconds before next update.
-	 *  If empty, this.config.updateInterval is used.
-	 */
-	scheduleUpdate: function(delay) {
-		var nextLoad = this.config.updateInterval;
-		if (typeof delay !== "undefined" && delay >= 0) {
-			nextLoad = delay;
-		}
-		nextLoad = nextLoad ;
-		var self = this;
-		setTimeout(function() {
-			self.getData();
-		}, nextLoad);
+		this.sendSocketNotification(
+			"MMM-NextCloud-Tasks-UPDATE",
+			{
+				id: this.identifier,
+				config: this.config
+			}
+		);
 	},
 
 	getDom: function() {
-		var self = this;
+		let self = this;
 
 		// create element wrapper for show into the module
-		var wrapper = document.createElement("div");
+		let wrapper = document.createElement("div");
+
+		if (self.error) {
+			wrapper.innerHTML= "<div>" + self.error + "</div>";
+		}
 
 		if (self.toDoList) {
 			Log.info("ToDos: ", self.toDoList);
-			var someWrapper = document.createElement("div");
+			let someWrapper = document.createElement("div");
 
 			someWrapper.innerHTML = "<ul>";
 			for (const element of self.toDoList) {
@@ -81,8 +74,9 @@ Module.register("MMM-NextCloud-Tasks", {
 
 			wrapper.appendChild(someWrapper);
 		} else {
-			Log.error('No todo list');
+			wrapper.innerHTML= "<div>Loading...</div>";
 		}
+		this.error = null;
 		return wrapper;
 	},
 
@@ -92,25 +86,38 @@ Module.register("MMM-NextCloud-Tasks", {
 
 	getStyles: function () {
 		return [
-			"SoulOfTestModule.css",
+			"MMM-NextCloud-Tasks.css",
 		];
-	},
-
-	// Load translations files
-	getTranslations: function() {
-		//FIXME: This can be load a one file javascript definition
-		return {
-			en: "translations/en.json",
-			es: "translations/es.json"
-		};
 	},
 
 	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
-		Log.log("SoulOfModule: received Notification", notification, payload);
-		if(notification === "SoulOfTestModule-UPDATE_TODOS") {
+		if(notification === "MMM-NextCloud-Tasks-Helper-TODOS#" + this.identifier) {
+			Log.log("received ToDos", payload);
 			this.toDoList = payload;
 			this.updateDom();
 		}
+		if(notification === "MMM-NextCloud-Tasks-Helper-LOG#" + this.identifier) {
+			Log.log("LOG: ", payload);
+		}
+		if(notification === "MMM-NextCloud-Tasks-Helper-ERROR#" + this.identifier) {
+			Log.error("ERROR: ", payload);
+			this.error += payload + "<br>";
+			this.updateDom();
+		}
 	},
+
+	verifyConfig: function(config) {
+		if(
+			typeof config.listUrl === "undefined" ||
+			typeof config.webDavAuth === "undefined" ||
+			typeof config.webDavAuth.username === "undefined" ||
+			typeof config.webDavAuth.password === "undefined"
+		) {
+			this.error += "Config variable missing" + "<br>";
+			Log.error("Config variable missing");
+			return false;
+		}
+		return true;
+	}
 });
