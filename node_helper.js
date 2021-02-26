@@ -6,42 +6,40 @@
  */
 
 var NodeHelper = require("node_helper");
+const { AuthType, createClient } = require("webdav");
+const ical = require("node-ical");
 
 module.exports = NodeHelper.create({
 
-	// Override socketNotificationReceived method.
-
-	/* socketNotificationReceived(notification, payload)
-	 * This method is called when a socket notification arrives.
-	 *
-	 * argument notification string - The identifier of the noitication.
-	 * argument payload mixed - The payload of the notification.
-	 */
 	socketNotificationReceived: function(notification, payload) {
-		if (notification === "MMM-NextCloud-Tasks-NOTIFICATION_TEST") {
-			console.log("Working notification system. Notification:", notification, "payload: ", payload);
-			// Send notification
-			this.sendNotificationTest(this.anotherFunction()); //Is possible send objects :)
+		let self = this;
+		console.log("SoulOfHelper: received Notification", notification, payload);
+		if (notification === "SoulOfTestModule-UPDATE_TODOS") {
+			const config = payload;
+			const client = self.initWebDav(config);
+			
+			self.getData(client, (payload) => {
+				console.log("SoulOfHelper: sending Notification", payload);
+				self.sendSocketNotification("SoulOfTestModule-UPDATE_TODOS", payload);
+			});
 		}
 	},
 
-	// Example function send notification test
-	sendNotificationTest: function(payload) {
-		this.sendSocketNotification("MMM-NextCloud-Tasks-NOTIFICATION_TEST", payload);
+	initWebDav: function(config) {
+		return client = createClient(config.listUrl, config.webDavAuth);
 	},
 
-	// this you can create extra routes for your module
-	extraRoutes: function() {
-		var self = this;
-		this.expressApp.get("/MMM-NextCloud-Tasks/extra_route", function(req, res) {
-			// call another function
-			values = self.anotherFunction();
-			res.send(values);
-		});
+	getData: async function(client, callback) {
+		let todos = [];
+		const directoryItems = await client.getDirectoryContents("/");
+		for (const element of directoryItems) {
+			const text = await client.getFileContents(element.filename, { format: "text" });
+			const icsObj = ical.sync.parseICS(text);
+			Object.values(icsObj).forEach(element => {
+				if (element.type === 'VTODO') todos.push(element);
+			});
+		}
+		console.log(todos);
+		callback(todos);
 	},
-
-	// Test another function
-	anotherFunction: function() {
-		return {date: new Date()};
-	}
 });

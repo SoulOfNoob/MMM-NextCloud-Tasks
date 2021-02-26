@@ -14,5 +14,9 @@
     "grunt-yamllint": "latest",
     "stylelint-config-standard": "latest",
     "time-grunt": "latest"
+  },
+  "dependencies": {
+    "node-ical": "^0.12.8",
+    "webdav": "^4.2.0"
   }
 }
