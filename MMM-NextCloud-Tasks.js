@@ -14,24 +14,26 @@ Module.register("MMM-NextCloud-Tasks", {
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
-	start: function() {
+	toDoList: null,
+	error: null,
+
+	start: function () {
 		var self = this;
-		var toDoList = null;
-		var error = null;
 
 		//Flag for check if module is loaded
-		this.loaded = false;
+		self.loaded = false;
 
-		if(this.verifyConfig(this.config)) {
+		if(self.verifyConfig(self.config)) {
 			Log.info("config valid");
 			// Schedule update timer.
-			this.getData();
+			self.getData();
 			setInterval(function() {
 				self.getData();
 				self.updateDom();
-			}, this.config.updateInterval);
+			}, self.config.updateInterval);
 		} else {
 			Log.info("config invalid");
+			self.error = "config invalid";
 			self.updateDom();
 		}
 	},
@@ -42,7 +44,7 @@ Module.register("MMM-NextCloud-Tasks", {
 	 * get a URL request
 	 *
 	 */
-	getData: function() {
+	getData: function () {
 		this.sendSocketNotification(
 			"MMM-NextCloud-Tasks-UPDATE",
 			{
@@ -52,36 +54,40 @@ Module.register("MMM-NextCloud-Tasks", {
 		);
 	},
 
-	getDom: function() {
+	getDom: function () {
 		let self = this;
 
 		// create element wrapper for show into the module
 		let wrapper = document.createElement("div");
+		wrapper.className = "MMM-NextCloud-Tasks-wrapper";
+
+		if (self.toDoList) {
+			wrapper.appendChild(self.renderList(self.toDoList));
+			self.error = null;
+		} else {
+			wrapper.innerHTML= "<div>Loading...</div>";
+		}
 
 		if (self.error) {
 			wrapper.innerHTML= "<div>" + self.error + "</div>";
 		}
-
-		if (self.toDoList) {
-			Log.info("ToDos: ", self.toDoList);
-			let someWrapper = document.createElement("div");
-
-			someWrapper.innerHTML = "<ul>";
-			for (const element of self.toDoList) {
-				someWrapper.innerHTML += "<li>" + element.summary + "</li>";
-			}
-			someWrapper.innerHTML += "</ul>";
-
-			wrapper.appendChild(someWrapper);
-		} else {
-			wrapper.innerHTML= "<div>Loading...</div>";
-		}
-		this.error = null;
 		return wrapper;
 	},
 
-	getScripts: function() {
-		return [];
+	renderList: function (list) {
+		let checked = "<span class=\"fa fa-fw fa-check-square\"></span>"
+		let unchecked = "<span class=\"fa fa-fw fa-square\"></span>"
+
+		let ul = document.createElement("ul");
+
+		for (const element of list) {
+			icon = (element.status === "COMPLETED" ? checked : unchecked );
+			li = document.createElement("li");
+			li.innerHTML = icon + " " + element.summary;
+			ul.appendChild(li);
+		}
+
+		return ul;
 	},
 
 	getStyles: function () {
@@ -90,10 +96,8 @@ Module.register("MMM-NextCloud-Tasks", {
 		];
 	},
 
-	// socketNotificationReceived from helper
 	socketNotificationReceived: function (notification, payload) {
 		if(notification === "MMM-NextCloud-Tasks-Helper-TODOS#" + this.identifier) {
-			Log.log("received ToDos", payload);
 			this.toDoList = payload;
 			this.updateDom();
 		}
@@ -102,19 +106,19 @@ Module.register("MMM-NextCloud-Tasks", {
 		}
 		if(notification === "MMM-NextCloud-Tasks-Helper-ERROR#" + this.identifier) {
 			Log.error("ERROR: ", payload);
-			this.error += payload + "<br>";
+			this.error = payload + "<br>";
 			this.updateDom();
 		}
 	},
 
-	verifyConfig: function(config) {
+	verifyConfig: function (config) {
 		if(
 			typeof config.listUrl === "undefined" ||
 			typeof config.webDavAuth === "undefined" ||
 			typeof config.webDavAuth.username === "undefined" ||
 			typeof config.webDavAuth.password === "undefined"
 		) {
-			this.error += "Config variable missing" + "<br>";
+			this.error = "Config variable missing";
 			Log.error("Config variable missing");
 			return false;
 		}

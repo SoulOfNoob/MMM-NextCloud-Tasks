@@ -8,3 +8,14 @@
  * Custom here your css module
  *
  */
+
+.MMM-NextCloud-Tasks-wrapper {
+    color: white;
+    font-size: 20px;
+    line-height: 2rem;
+}
+
+.MMM-NextCloud-Tasks-wrapper ul {
+    list-style: none;
+    padding: 0;
+}
