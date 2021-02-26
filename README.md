@@ -9,6 +9,12 @@ This module loads a ToDo list via webDav from the NextCloud Tasks app using the 
 - Working NextCloud installation
 - Installed Tasks app
 
+## NextCloud preparations
+
+- Create new App Password following this [Guide](https://docs.nextcloudpi.com/en/two-factor-authentication-for-nextcloud/)
+- Create the Private Link to the ToDo list you want to display like this:
+![Tasks Screenshot](/assets/generate_private_link.jpg?raw=true)
+
 ## Installing the module
 
 1. run `git clone https://github.com/SoulOfNoob/MMM-NextCloud-Tasks.git` inside `MagicMirror/modules` directory.
