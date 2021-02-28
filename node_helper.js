@@ -9,14 +9,15 @@ var NodeHelper = require("node_helper");
 const { AuthType, createClient } = require("webdav");
 const ical = require("node-ical");
 const transformer = require("./transformer");
+const { fetchList, parseList } = require("./webDavHelper");
 
 module.exports = NodeHelper.create({
 	socketNotificationReceived: function(notification, payload) {
 		let self = this;
 		const moduleId = payload.id;
 		if (notification === "MMM-NextCloud-Tasks-UPDATE") {
-			const client = self.initWebDav(payload.config);
-			self.getData(moduleId, client, (payload) => {
+			
+			self.getData(moduleId, payload.config, (payload) => {
 				self.sendData(moduleId, payload);
 			});
 		}
@@ -26,20 +27,13 @@ module.exports = NodeHelper.create({
 		return client = createClient(config.listUrl, config.webDavAuth);
 	},
 
-	getData: async function(moduleId, client, callback) {
+	getData: async function(moduleId, config, callback) {
 		let self = this;
 		let todos = [];
 
 		try {
-			const directoryItems = await client.getDirectoryContents("/");
-
-			for (const element of directoryItems) {
-				const text = await client.getFileContents(element.filename, { format: "text" });
-				const icsObj = ical.sync.parseICS(text);
-				Object.values(icsObj).forEach(element => {
-					if (element.type === 'VTODO') todos.push(element);
-				});
-			}
+			const icsList = await fetchList(config);
+			todos = parseList(icsList);
 			todos = transformer.transformData(todos);
 			callback(todos);
 		} catch (error) {
