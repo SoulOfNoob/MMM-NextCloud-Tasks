@@ -1,20 +1,21 @@
 /* eslint-disable indent */
 const { AuthType, createClient } = require("webdav");
 const ical = require('node-ical');
-const transformer = require("./transformer");
+const { transformData } = require("./transformer");
 const { fetchList, parseList } = require("./webDavHelper");
 const config = require("./testConfig");
-const icsList = require("./testData");
+var icsList = require("./testData");
 
-async function test() {
-    var todos = [];
+async function test(command = "local") {
+    if (command == "fetch") icsList = await fetchList(config);
 
-    const icsList = await fetchList(config);
-    todos = parseList(icsList);
-    todos = transformer.transformData(todos);
-
-    console.log(todos);
-    console.log(JSON.stringify(todos));
+    console.log("icsList:", icsList);
+    let rawList = parseList(icsList);
+    console.log("rawList:", rawList);
+    let nestedList = transformData(rawList);
+    console.log("nestedList:", nestedList);
+    console.log(JSON.stringify(nestedList));
 }
 
-test();
+// test("fetch"); // test by using real list from testConfig.js
+test("local"); // test by using local list from testData.js
