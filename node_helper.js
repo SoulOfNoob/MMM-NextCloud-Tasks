@@ -8,7 +8,7 @@
 var NodeHelper = require("node_helper");
 const { AuthType, createClient } = require("webdav");
 const ical = require("node-ical");
-const transformer = require("./transformer");
+const { transformData } = require("./transformer");
 const { fetchList, parseList } = require("./webDavHelper");
 
 module.exports = NodeHelper.create({
@@ -23,19 +23,13 @@ module.exports = NodeHelper.create({
 		}
 	},
 
-	initWebDav: function(config) {
-		return client = createClient(config.listUrl, config.webDavAuth);
-	},
-
 	getData: async function(moduleId, config, callback) {
 		let self = this;
-		let todos = [];
-
 		try {
 			const icsList = await fetchList(config);
-			todos = parseList(icsList);
-			todos = transformer.transformData(todos);
-			callback(todos);
+			const rawList = parseList(icsList);
+			const nestedList = transformData(rawList);
+			callback(nestedList);
 		} catch (error) {
 			console.error("WebDav", error);
 			if(error.status === 401) {

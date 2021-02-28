@@ -1,6 +1,5 @@
 /* eslint-disable curly */
 /* eslint-disable indent */
-/* eslint-disable quotes */
 
 function findParent(parents, uid) {
     // Search parents for parent
@@ -58,4 +57,4 @@ function transformData(children, parents = []) {
     }
 }
 
-exports.transformData = transformData;
+module.exports.transformData = transformData;
