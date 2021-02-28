@@ -4,6 +4,8 @@ This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror
 
 This module loads a ToDo list via webDav from the NextCloud Tasks app using the "private link" and [NextCloud App Password](https://docs.nextcloudpi.com/en/two-factor-authentication-for-nextcloud/)
 
+current development status: **work in progress**
+
 ![Small Screenshot](/assets/small_screenshot.png?raw=true)
 
 ## Dependencies
