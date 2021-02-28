@@ -25,7 +25,7 @@ async function fetchList(config) {
     let icsStrings = [];
     for (const element of directoryItems) {
         const icsStr = await client.getFileContents(element.filename, { format: "text" });
-        console.log(icsStr);
+        //console.log(icsStr);
         icsStrings.push(icsStr);
     }
     return icsStrings;

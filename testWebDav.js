@@ -9,7 +9,7 @@ const icsList = require("./testData");
 async function test() {
     var todos = [];
 
-    //const icsList = await fetchList(config);
+    const icsList = await fetchList(config);
     todos = parseList(icsList);
     todos = transformer.transformData(todos);
 
