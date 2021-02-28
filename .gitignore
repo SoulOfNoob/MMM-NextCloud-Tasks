@@ -2,3 +2,4 @@ node_modules
 demos
 *DS_Store
 testConfig.js
+testData.js
