@@ -4,7 +4,7 @@ const ical = require('node-ical');
 const transformer = require("./transformer");
 const { fetchList, parseList } = require("./webDavHelper");
 const config = require("./testConfig");
-const icsList = require("./testDataTemplate");
+const icsList = require("./testData");
 
 async function test() {
     var todos = [];
