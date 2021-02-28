@@ -51,8 +51,10 @@ function transformData(children, parents = []) {
 
     // as long as there are orphans recursively call self
     if (orphans.length > 0) {
-        transformData(orphans, parents);
+        //console.log("continue processing orphans:", orphans);
+        return transformData(orphans, parents);
     } else {
+        //console.log("return parents:", parents);
         return parents;
     }
 }
