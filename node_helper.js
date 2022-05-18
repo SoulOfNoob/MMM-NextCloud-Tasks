@@ -6,8 +6,6 @@
  */
 
 var NodeHelper = require("node_helper");
-const { AuthType, createClient } = require("webdav");
-const ical = require("node-ical");
 const { transformData } = require("./transformer");
 const { fetchList, parseList } = require("./webDavHelper");
 
