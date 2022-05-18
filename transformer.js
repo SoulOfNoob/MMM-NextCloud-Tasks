@@ -1,5 +1,6 @@
 /* eslint-disable curly */
 /* eslint-disable indent */
+const { sortPriority, sortPriorityDesc, sortCreated, sortCreatedDesc, sortModified, sortModifiedDesc } = require("./sort_helper");
 
 function findParent(parents, uid) {
     // Search parents for parent
@@ -59,4 +60,38 @@ function transformData(children, parents = []) {
     }
 }
 
-module.exports.transformData = transformData;
+function sortList(rawList, method) {
+    
+    switch (method){
+        case "priority":
+             rawList.sort(sortPriority);
+            break;
+
+        case "priority desc":
+            rawList.sort(sortPriorityDesc);
+            break;
+
+        case "created":
+            rawList.sort(sortCreated);
+            break;
+
+        case "created desc":
+            rawList.sort(sortCreatedDesc);
+            break;
+
+        case "modified":
+            rawList.sort(sortModified);
+            break;
+
+        case "modified desc":
+            rawList.sort(sortModifiedDesc);
+            break;
+    }
+
+    return rawList;
+}
+
+module.exports = {
+    transformData: transformData,
+    sortList: sortList
+}

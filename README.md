@@ -38,6 +38,7 @@ var config = {
                 updateInterval: 60000,
                 listUrl: "<NEXTCLOUD_TASKS_PRIVATE_LINK>",
                 hideCompletedTasks: true,
+                sortMethod: "<SORT_METHOD>",
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",
@@ -56,6 +57,7 @@ var config = {
 | `webDavAuth`         | *Required* WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
 | `updateInterval`     | *Optional* How often should the data be refreshed (in milliseconds)
 | `hideCompletedTasks` | *Optional* should completed tasks show up or not
+| `sortMethod`         | *Optional* How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 
 ## Screenshots
 
