@@ -31,7 +31,7 @@ function transformData(children, parents = []) {
         } else {
             // has relation
             // find parent
-            let parent = findParent(parents, child["related-to"]);
+            let parent = findParent(parents, (typeof child["related-to"].val === 'undefined' ? child["related-to"] : child["related-to"].val));
             if(parent) {
                 // has parent in parents?
                 if (typeof parent.children === "undefined") {
