@@ -6,7 +6,7 @@
  */
 
 var NodeHelper = require("node_helper");
-const { transformData } = require("./transformer");
+const { transformData, sortList } = require("./transformer");
 const { fetchList, parseList } = require("./webDavHelper");
 
 module.exports = NodeHelper.create({
@@ -26,7 +26,8 @@ module.exports = NodeHelper.create({
 		try {
 			const icsList = await fetchList(config);
 			const rawList = parseList(icsList);
-			const nestedList = transformData(rawList);
+			const sortedList = sortList(rawList, config.sortMethod);
+			const nestedList = transformData(sortedList);
 			callback(nestedList);
 		} catch (error) {
 			console.error("WebDav", error);
