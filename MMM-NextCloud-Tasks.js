@@ -10,7 +10,8 @@
 Module.register("MMM-NextCloud-Tasks", {
 	defaults: {
 		updateInterval: 60000,
-		hideCompletedTasks: true
+		hideCompletedTasks: true,
+		sortMethod: "priority"
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -123,7 +124,8 @@ Module.register("MMM-NextCloud-Tasks", {
 			typeof config.listUrl === "undefined" ||
 			typeof config.webDavAuth === "undefined" ||
 			typeof config.webDavAuth.username === "undefined" ||
-			typeof config.webDavAuth.password === "undefined"
+			typeof config.webDavAuth.password === "undefined" ||
+			typeof config.sortMethod === "undefined"
 		) {
 			this.error = "Config variable missing";
 			Log.error("Config variable missing");

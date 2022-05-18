@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-const { AuthType, createClient } = require("webdav");
+const { createClient } = require("webdav");
 const ical = require('node-ical');
 const transformer = require("./transformer");
 
