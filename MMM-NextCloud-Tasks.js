@@ -78,16 +78,23 @@ Module.register("MMM-NextCloud-Tasks", {
 	renderList: function (children) {
 		let self = this;
 
+		let red = "<span style=\"color:#e3516e\">"
+		let yellow = "<span style=\"color:#e1e34f\">"
+		let blue = "<span style=\"color:#2f26f4\">"
+		let grey = "<span style=\"color:#646464\">"
+		let endSpan = "</span>"
 		let checked = "<span class=\"fa fa-fw fa-check-square\"></span>"
 		let unchecked = "<span class=\"fa fa-fw fa-square\"></span>"
 
 		let ul = document.createElement("ul");
 		for (const element of children) {
 			self.config
+			let p = element.priority;
 			if (element.status !== "COMPLETED" || self.config.hideCompletedTasks === false) {
 				icon = (element.status === "COMPLETED" ? checked : unchecked );
 				let li = document.createElement("li");
-				li.innerHTML = icon + " " + element.summary;
+				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)))
+				li.innerHTML = color + icon + endSpan + " " + element.summary;
 				if (typeof element.children !== "undefined") {
 					let childList = self.renderList(element.children);
 					li.appendChild(childList);
