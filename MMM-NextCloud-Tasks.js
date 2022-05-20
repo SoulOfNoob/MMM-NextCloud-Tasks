@@ -11,7 +11,8 @@ Module.register("MMM-NextCloud-Tasks", {
 	defaults: {
 		updateInterval: 60000,
 		hideCompletedTasks: true,
-		sortMethod: "priority"
+		sortMethod: "priority",
+		colorize: false
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -94,7 +95,13 @@ Module.register("MMM-NextCloud-Tasks", {
 				icon = (element.status === "COMPLETED" ? checked : unchecked );
 				let li = document.createElement("li");
 				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)))
-				li.innerHTML = color + icon + endSpan + " " + element.summary;
+				
+				if (self.config.colorize) {
+					li.innerHTML = color + icon + endSpan + " " + element.summary;
+				} else {
+					li.innerHTML = icon + " " + element.summary;
+				}
+				
 				if (typeof element.children !== "undefined") {
 					let childList = self.renderList(element.children);
 					li.appendChild(childList);
@@ -132,7 +139,8 @@ Module.register("MMM-NextCloud-Tasks", {
 			typeof config.webDavAuth === "undefined" ||
 			typeof config.webDavAuth.username === "undefined" ||
 			typeof config.webDavAuth.password === "undefined" ||
-			typeof config.sortMethod === "undefined"
+			typeof config.sortMethod === "undefined" ||
+			typeof config.colorize === "undefined"
 		) {
 			this.error = "Config variable missing";
 			Log.error("Config variable missing");
