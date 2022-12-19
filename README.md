@@ -1,10 +1,10 @@
 # MMM-NextCloud-Tasks
 
-This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
+This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/). Originally developed by [SoulofN00b](https://github.com/SoulOfNoob/MMM-NextCloud-Tasks/), I have forked it to resolve bugs and add new features.
 
 This module loads a ToDo list via webDav from the NextCloud Tasks app using the "private link" and [NextCloud Managed Devices](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#managing-devices)
 
-current development status: **release** \
+Current development status: **released** \
 ![Small Screenshot](/assets/small_screenshot.png?raw=true)
 
 ## Dependencies
